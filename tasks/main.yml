@@ -1,2 +1,9 @@
 ---
-# tasks file for ansible_role_zfs-settings
+
+- name: "configure zfs on {{ ansible_distribution }}"
+  include_tasks:
+    file: "{{ item }}"
+  with_first_found:
+    - files:
+        - "{{ ansible_distribution }}.yml"
+      skip: true

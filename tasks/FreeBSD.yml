@@ -1,0 +1,38 @@
+---
+- name: "include {{ ansible_distribution }} variables"
+  include_vars:
+    file: "{{ ansible_distribution }}.yml"
+
+- debug:
+    msg: ""
+
+- name: set ZFS settings for boot loader
+  lineinfile:
+    path: "{{ loader_conf }}"
+    regexp: "{{ loader_conf_entry.regexp }}"
+    line: "{{ loader_conf_entry.line }}"
+  loop:
+    - regexp: '^zfs_load='
+      line: 'zfs_load="YES"'
+    - regexp: '^vfs.zfs.arc_max='
+      line: 'vfs.zfs.arc_max="{{ ansible_memtotal_mb // 2 }}M"'
+  loop_control:
+    loop_var: loader_conf_entry
+
+- include: sysrc.yml entry="{{ sysrc_entry }}"
+  loop:
+    - { name: zfs_enable, value: "YES" }
+  loop_control:
+    loop_var: sysrc_entry
+
+- name: set ashit alignment
+  sysctl:
+    name: "{{ sysctl_conf_entry.name }}"
+    value: "{{ sysctl_conf_entry.value }}"
+    state: present
+    reload: yes
+    sysctl_file: "{{ sysctl_conf }}"
+  loop:
+    - { name: vfs.zfs.min_auto_ashift, value: 12 }
+  loop_control:
+    loop_var: sysctl_conf_entry

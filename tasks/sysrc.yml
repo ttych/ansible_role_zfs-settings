@@ -1,0 +1,9 @@
+---
+- name: "get sysrc {{ entry.name }} status"
+  shell: "sysrc -n {{ entry.name }}"
+  changed_when: no
+  register: sysrc_entry_status
+
+- name: "update sysrc {{ entry.name }}"
+  shell: "sysrc {{ entry.name }}={{ entry.value }}"
+  when: sysrc_entry_status.stdout != entry.value
