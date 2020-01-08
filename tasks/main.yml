@@ -3,7 +3,8 @@
 - name: "configure zfs on {{ ansible_distribution }}"
   include_tasks:
     file: "{{ item }}"
-  with_first_found:
-    - files:
+  vars:
+    tasks_files:
+      files:
         - "{{ ansible_distribution }}.yml"
-      skip: true
+  loop: "{{ q('first_found', tasks_files, errors='ignore') }}"
