@@ -3,9 +3,6 @@
   include_vars:
     file: "{{ ansible_distribution }}.yml"
 
-- debug:
-    msg: ""
-
 - name: set ZFS settings for boot loader
   lineinfile:
     path: "{{ loader_conf }}"
