@@ -7,4 +7,6 @@
     tasks_files:
       files:
         - "{{ ansible_distribution }}.yml"
+        - "{{ ansible_os_family }}.yml"
+        - "{{ ansible_system }}.yml"
   loop: "{{ q('first_found', tasks_files, errors='ignore') }}"
